@@ -7,6 +7,7 @@
       v-for="btn in buttons"
       :key="btn.value"
       plain
+      :disabled="btn.isDisabled"
       :type="btn.isPicked ? 'primary' : 'info'"
       native-type="button"
       @click="onNumberPick(btn)"
@@ -55,6 +56,12 @@ const onNumberPick = (btn: NumberBtn) => {
 
   submit();
 };
+
+defineExpose({
+  reset: () => {
+    state.localNumbers = new Set();
+  },
+});
 </script>
 
 <style>

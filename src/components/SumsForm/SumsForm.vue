@@ -6,7 +6,8 @@
     <el-main style="margin: 0 auto;">
       <input-form 
         :disabled="loading"
-        @submit="onInputFormSubmit($event)" 
+        @submit="onInputFormSubmit($event)"
+        @reset="onInputFormReset()"
       />
 
       <card-form class="sums-form__numbers-pick-container">
@@ -14,6 +15,7 @@
           <el-text>Исключить:</el-text>
         
           <numbers-pick-form 
+            ref="excludedPickFormRef"
             :disabled-buttons="included"
             @submit="update('excluded', $event)"
           />
@@ -25,6 +27,7 @@
           <el-text>Включить:</el-text>
         
           <numbers-pick-form 
+            ref="includedPickFormRef"
             :disabled-buttons="excluded"
             @submit="update('included', $event)"
           />
@@ -40,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, toRefs } from 'vue';
+import { computed, reactive, ref, toRefs } from 'vue';
 import { ElContainer, ElMain, ElLoading, ElSpace, ElText } from 'element-plus';
 
 import { InputForm } from '@components/InputForm';
@@ -54,13 +57,17 @@ import { include } from '@packages/include';
 
 const vLoading = ElLoading.directive;
 
-const state = reactive({
+const initialState = {
   error: false,
   excluded: [] as number[],
   included: [] as number[],
   loading: false,
   sums: [] as number[][],
-});
+};
+
+const state = reactive({ ...initialState });
+const excludedPickFormRef = ref<InstanceType<typeof NumbersPickForm>>();
+const includedPickFormRef = ref<InstanceType<typeof NumbersPickForm>>();
 
 const onInputFormSubmit = async ({ sum, num }: { sum: number, num: number }) => {
   state.error = false;
@@ -73,6 +80,13 @@ const onInputFormSubmit = async ({ sum, num }: { sum: number, num: number }) => 
   } finally {
     state.loading = false;
   }
+};
+
+const onInputFormReset = () => {
+  excludedPickFormRef.value?.reset();
+  includedPickFormRef.value?.reset();
+  
+  Object.assign(state, { ...initialState });
 };
 
 const update = (type: 'excluded' | 'included', numbers: number[]) => {

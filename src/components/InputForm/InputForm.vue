@@ -32,6 +32,16 @@
             Применить
           </el-button>
         </el-form-item>
+
+        <el-form-item>
+          <el-button 
+            :disabled="disabled"
+            native-type="button"
+            @click="reset()"
+          >
+            Сбросить
+          </el-button>
+        </el-form-item>
       </el-row>
     </el-form>
   </card-form>
@@ -49,10 +59,10 @@ import {
 } from 'element-plus';
 
 import { CardForm } from '@components/CardForm';
-import type { InputFormEmits } from './types';
+import type { InputFormEmits, InputFormProps } from './types';
 
 withDefaults(
-  defineProps<{ disabled?: boolean }>(),
+  defineProps<InputFormProps>(),
   {
     disabled: false,
   },
@@ -67,6 +77,13 @@ const emit = defineEmits<InputFormEmits>();
 
 const onSubmit = () => {
   emit('submit', { ...state });
+};
+
+const reset = () => {
+  state.num = 1;
+  state.sum = 1;
+
+  emit('reset');
 };
 
 const { sum, num } = toRefs(state);
