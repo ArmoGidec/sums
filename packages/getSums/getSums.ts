@@ -7,18 +7,11 @@ export const getSums = (sum: number, n: number) => {
 const MIN = 1;
 const MAX = 9;
 
-const cache: Record<number, Record<number, number[][]>> = {};
-
 async function _getSums(
   sum: number,
   n: number,
   possibleNums: number[],
 ): Promise<number[][]> {
-  const fromCache = cache[sum]?.[n];
-  if (fromCache) {
-    return fromCache;
-  }
-  
   if (n === 1) {
     return sum <= MAX && possibleNums.includes(sum) ? [[sum]] : [];
   }
@@ -32,10 +25,6 @@ async function _getSums(
     }
     
     const nextResults = await _getSums(restSum, n - 1, possibleNums.slice(idx + 1));
-
-    const sumCache = cache[sum] || (cache[sum] = {});
-    sumCache[n] = nextResults;
-
     if (nextResults.length) {
       results.push(...nextResults.map((nextResult) => [possibleNum, ...nextResult]));
     }
